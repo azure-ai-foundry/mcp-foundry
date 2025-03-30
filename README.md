@@ -3,11 +3,13 @@ This MCP server integrates with Azure AI Foundry to enable connections to your e
 
 ![demo](img/mcp-azs.gif)
 
+[![smithery badge](https://smithery.ai/badge/@azure-ai-foundry/mcp-foundry)](https://smithery.ai/server/@azure-ai-foundry/mcp-foundry)
 [![GitHub watchers](https://img.shields.io/github/watchers/azure-ai-foundry/mcp-foundry.svg?style=social&label=Watch)](https://github.com/azure-ai-foundry/mcp-foundry/watchers)
 [![GitHub forks](https://img.shields.io/github/forks/azure-ai-foundry/mcp-foundry.svg?style=social&label=Fork)](https://github.com/azure-ai-foundry/mcp-foundry/fork)
 [![GitHub stars](https://img.shields.io/github/stars/azure-ai-foundry/mcp-foundry?style=social&label=Star)](https://github.com/azure-ai-foundry/mcp-foundry/stargazers)
 
 [![Azure AI Community Discord](https://dcbadge.vercel.app/api/server/ByRwuEEgH4)](https://discord.gg/REmjGvvFpW)
+
 
 ## Features
 
@@ -61,6 +63,14 @@ DEFAULT_AGENT_ID=your-default-agent-id
 ```
 
 ## Installation
+
+### Installing via Smithery
+
+To install Azure AI Agent Service for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@azure-ai-foundry/mcp-foundry):
+
+```bash
+npx -y @smithery/cli install @azure-ai-foundry/mcp-foundry --client claude
+```
 
 ### Prerequisites
 
