@@ -1,0 +1,30 @@
+# Smithery configuration file: https://smithery.ai/docs/config#smitheryyaml
+
+startCommand:
+  type: stdio
+  configSchema:
+    # JSON Schema defining the configuration options for the MCP.
+    type: object
+    required:
+      - projectConnectionString
+    properties:
+      projectConnectionString:
+        type: string
+        description: Azure project connection string (required)
+      defaultAgentId:
+        type: string
+        description: Default Azure AI Agent ID (optional)
+  commandFunction:
+    # A JS function that produces the CLI command based on the given config to start the MCP on stdio.
+    |-
+    (config) => ({
+      command: 'python',
+      args: ['-m', 'azure_agent_mcp_server'],
+      cwd: '/app/src/python',
+      env: Object.assign({
+        PROJECT_CONNECTION_STRING: config.projectConnectionString
+      }, config.defaultAgentId ? { DEFAULT_AGENT_ID: config.defaultAgentId } : {})
+    })
+  exampleConfig:
+    projectConnectionString: your-project-connection-string
+    defaultAgentId: your-default-agent-id
