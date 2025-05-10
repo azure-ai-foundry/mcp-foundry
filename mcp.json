@@ -4,7 +4,7 @@
     {
       "type": "promptString",
       "id": "LOCAL_WORKING_DIRECTORY",
-      "description": "Directory where the MCP server Git repo was cloned to",
+      "description": "This is the directory where the MCP server Git repo was cloned to",
       "password": false
     }
   ],
