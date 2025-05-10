@@ -78,7 +78,7 @@ Edit `mcp.json` to configure server options and tool settings.
 
 - Open in VS Code and run:
   ```sh
-  python __main__.py
+  uv run __main__.py --transport sse
   ```
 
 ### Docker
