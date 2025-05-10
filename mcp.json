@@ -1,9 +1,26 @@
 {
   "description": "MCP Foundry Server configuration file.",
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "LOCAL_WORKING_DIRECTORY",
+      "description": "Directory where the MCP server Git repo was cloned to",
+      "password": false
+    }
+  ],
   "servers": {
     "foundry": {
-      "command": "python",
-      "args": ["__main__.py"]
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "${input:LOCAL_WORKING_DIRECTORY}",
+        "__main__.py",
+        "--transport",
+        "stdio",
+        "--envFile",
+        ".env"
+      ]
     }
   }
 }
