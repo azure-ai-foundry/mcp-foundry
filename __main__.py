@@ -480,9 +480,12 @@ def run_mcp_service():
 
     parser.add_argument('--transport', required=True, default='stdio',
                         help='Transport protocol (sse | stdio) (default: stdio)')
-    parser.add_argument('--envFile', required=False, default='.env', help='Path to .env file (default: .env)')
-    parser.add_argument('--host', required=False, default='0.0.0.0', help='Host IP or name for SSE (default: 0.0.0.0)')
-    parser.add_argument('--port', required=False, type=int, default=8000, help='Port number for SSE (default: 8000)')
+    parser.add_argument('--envFile', required=False, default='.env',
+                        help='Path to .env file (default: .env)')
+    parser.add_argument('--host', required=False, default='0.0.0.0',
+                        help='Host IP or name for SSE (default: 0.0.0.0)')
+    parser.add_argument('--port', required=False, type=int, default=8000,
+                        help='Port number for SSE (default: 8000)')
     parser.add_argument('--logLevel', required=False, default='DEBUG',
                         help='Logging Level (default: DEBUG) one of: ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]')
 

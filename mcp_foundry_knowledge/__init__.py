@@ -1,4 +1,4 @@
-from mcp_foundry_knowledge.data_access_objects import (
+from .data_access_objects import (
     SearchIndexDao,
     SearchBaseDao,
     SearchClientDao,

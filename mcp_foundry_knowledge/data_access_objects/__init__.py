@@ -1,6 +1,6 @@
 
-from mcp_foundry_knowledge.data_access_objects.dao import SearchIndexDao, SearchBaseDao, SearchClientDao, SearchIndexerDao
-from mcp_foundry_knowledge.data_access_objects.models import SearchIndexSchema, \
+from .dao import SearchIndexDao, SearchBaseDao, SearchClientDao, SearchIndexerDao
+from .models import SearchIndexSchema, \
     convert_pydantic_model_to_search_index, SearchFieldSchema, SuggesterSchema, CorsOptionsSchema, ScoringProfileSchema, \
     FieldMappingModel, convert_to_field_mappings, OperationResult, SearchDocument
 
