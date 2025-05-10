@@ -33,6 +33,40 @@ A Model Context Protocol server for Azure AI Foundry, providing a unified set of
 - **fk_fetch_url_contents** - Retrieves the contents of a URL (sample JSON, document etc)
 
 
+##### Configuration of Environment Variables in MCP Host
+
+You will need to create an .env file in the directory you have cloned the repo to
+
+If you are authenticating with a managed identity you will need to pass in the environment variables in your MCP host configuration. You can also use the AI Search API Key to Authenticate.
+
+The authentication method and search endpoints needs to be specified. These are required environment variables
+
+If you are authenticating with a service principal, then you should configure the following variable:
+- AZURE_AUTHENTICATION_METHOD - default is "api-search-key"
+- AZURE_AI_SEARCH_ENDPOINT
+- AZURE_TENANT_ID
+- AZURE_CLIENT_ID
+- AZURE_CLIENT_SECRET
+
+If you are authenticating with an API key, then you have to configure the following environment variables:
+- AZURE_AUTHENTICATION_METHOD - default is "api-search-key"
+- AZURE_AI_SEARCH_ENDPOINT
+- AZURE_AUTHENTICATION_METHOD
+- AZURE_AI_SEARCH_API_KEY
+
+You can also filter the list of tools returned to your MCP host by specifying a comma-delimited list of tool groups in your configuration.
+
+| Environment Variable            | Value Data Type  | Why It Is Needed                                                                                           |
+|---------------------------------|------------------|------------------------------------------------------------------------------------------------------------|
+| AZURE_AUTHENTICATION_METHOD     | `string`         | `"service-principal"` for service principal based, or `"api-search-key"` for key-based access.             |
+| AZURE_AI_SEARCH_ENDPOINT        | `string (URL)`   | Specifies the Azure AI Search endpoint URL; used to send REST API requests to the service.                 |
+| AZURE_TENANT_ID                 | `string`         | Identifies the Azure Active Directory (AAD) tenant used for authentication via the Service Principal.      |
+| AZURE_CLIENT_ID                 | `string`         | The unique identifier of the Service Principal (app registration) used for Azure authentication.           |
+| AZURE_CLIENT_SECRET             | `string`         | The secret credential for the Service Principal; used to authenticate and obtain tokens from AAD.          |
+| AZURE_AI_SEARCH_API_KEY         | `string`         | Used to authenticate read/write API requests to the Azure AI Search instance; must be kept secure.         |
+| AZURE_AI_SEARCH_API_VERSION     | `string`         | API Version to use.                                                                                        |
+
+
 ### Foundry-Models
 #### Tools
 - Tool 1: [placeholder]
