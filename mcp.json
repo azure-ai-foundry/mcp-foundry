@@ -1,5 +1,5 @@
 {
-  "description": "MCP Foundry Server configuration file.",
+  "description": "MCP Foundry Server configuration file",
   "inputs": [
     {
       "type": "promptString",
