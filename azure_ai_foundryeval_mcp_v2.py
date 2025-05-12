@@ -640,6 +640,162 @@ def run_text_eval(
         # Always restore stdout, even if an exception occurs
         sys.stdout = original_stdout
         heartbeat_active = False
+        
+@mcp.tool()
+async def agent_query_and_evaluate(
+    agent_id: str,
+    query: str,
+    evaluator_names: List[str] = None,
+    include_studio_url: bool = True  # Option to include studio URL
+) -> Dict:
+    """
+    Query an agent and evaluate its response in a single operation.
+    
+    Parameters:
+    - agent_id: ID of the agent to query
+    - query: Text query to send to the agent
+    - evaluator_names: Optional list of agent evaluator names to use (defaults to all)
+    - include_studio_url: Whether to include the Azure AI studio URL in the response
+    
+    Returns both the agent response and evaluation results
+    """
+    # Save original stdout so we can restore it later
+    original_stdout = sys.stdout
+    # Redirect stdout to stderr to prevent PromptFlow output from breaking MCP
+    sys.stdout = sys.stderr
+    
+    # Heartbeat mechanism to keep connection alive during long operations
+    import threading
+    import time
+
+    # Set up a heartbeat mechanism to keep the connection alive
+    heartbeat_active = True
+
+    def send_heartbeats():
+        count = 0
+        while heartbeat_active:
+            count += 1
+            logger.info(f"Heartbeat {count} - Evaluation in progress...")
+            # Print to stderr to keep connection alive
+            print(f"Evaluation in progress... ({count * 15}s)", file=sys.stderr, flush=True)
+            time.sleep(15)  # Send heartbeat every 15 seconds
+
+    # Start heartbeat thread
+    heartbeat_thread = threading.Thread(target=send_heartbeats, daemon=True)
+    heartbeat_thread.start()
+    
+    try:
+        if not agent_initialized or not evaluation_initialized:
+            heartbeat_active = False  # Stop heartbeat
+            return {"error": "Services not fully initialized. Check environment variables."}
+        
+        if ai_client is None:
+            success = await initialize_agent_client()
+            if not success or ai_client is None:
+                heartbeat_active = False  # Stop heartbeat
+                return {"error": "Failed to initialize Azure AI Agent client."}
+
+        try:
+            # Query the agent (this part remains async)
+            query_response = await query_agent(agent_id, query)
+            
+            if not query_response.get("success", False):
+                heartbeat_active = False  # Stop heartbeat
+                return query_response
+            
+            # Get the thread and run IDs
+            thread_id = query_response["thread_id"]
+            run_id = query_response["run_id"]
+            
+            # Now we'll switch to synchronous mode, exactly like the GitHub example
+            
+            # Step 1: Create a synchronous client (this is what GitHub example uses)
+            from azure.identity import DefaultAzureCredential
+            from azure.ai.projects import AIProjectClient  # This is the sync version
+            
+            sync_client = AIProjectClient.from_connection_string(
+                credential=DefaultAzureCredential(),
+                conn_str=project_connection_string
+            )
+            
+            # Step 2: Create converter with the sync client, exactly like example
+            from azure.ai.evaluation import AIAgentConverter
+            converter = AIAgentConverter(sync_client)
+            
+            # Step 3: Create a temp file name
+            temp_filename = "temp_evaluation_data.jsonl"
+            
+            try:
+                # Step 4: Convert data synchronously, exactly as in their example
+                evaluation_data = converter.convert(thread_id=thread_id, run_id=run_id)
+                
+                # Step 5: Write to file
+                with open(temp_filename, 'w') as f:
+                    json.dump(evaluation_data, f)
+                
+                # Step 6: Default to all agent evaluators if none specified
+                if not evaluator_names:
+                    evaluator_names = list(agent_evaluator_map.keys())
+                
+                # Step 7: Create evaluators
+                evaluators = {}
+                for name in evaluator_names:
+                    evaluators[name] = create_agent_evaluator(name)
+                
+                # Step 8: Run evaluation, exactly as in their example
+                # Use contextlib to ensure all stdout is redirected
+                with contextlib.redirect_stdout(sys.stderr):
+                    from azure.ai.evaluation import evaluate
+                    
+                    evaluation_result = evaluate(
+                        data=temp_filename,
+                        evaluators=evaluators,
+                        azure_ai_project=azure_ai_project if include_studio_url else None
+                    )
+                
+                # Step 9: Prepare response
+                response = {
+                    "success": True,
+                    "agent_id": agent_id,
+                    "thread_id": thread_id,
+                    "run_id": run_id,
+                    "query": query,
+                    "response": query_response["result"],
+                    "citations": query_response.get("citations", []),
+                    "evaluation_metrics": evaluation_result.get("metrics", {})
+                }
+                
+                # Include studio URL if available
+                if include_studio_url and "studio_url" in evaluation_result:
+                    response["studio_url"] = evaluation_result.get("studio_url")
+                    
+                heartbeat_active = False  # Stop heartbeat
+                return response
+                
+            except Exception as e:
+                logger.error(f"Evaluation error: {str(e)}")
+                import traceback
+                logger.error(traceback.format_exc())
+                heartbeat_active = False  # Stop heartbeat
+                return {"error": f"Evaluation error: {str(e)}"}
+                
+            finally:
+                # Clean up temp file
+                if os.path.exists(temp_filename):
+                    try:
+                        os.remove(temp_filename)
+                    except Exception:
+                        pass
+                    
+        except Exception as e:
+            logger.error(f"Error in query and evaluate: {str(e)}")
+            heartbeat_active = False  # Stop heartbeat
+            return {"error": f"Error in query and evaluate: {str(e)}"}
+            
+    finally:
+        # Always restore stdout, even if an exception occurs
+        sys.stdout = original_stdout
+        heartbeat_active = False  # Stop heartbeat
 
 # Add this new helper function to format evaluation outputs
 @mcp.tool()
