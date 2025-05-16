@@ -1,0 +1,19 @@
+{
+    "servers": {
+        "mcp_foundry_server": {
+            "type": "stdio",
+            "command": "pipx",
+            "args": [
+                "run",
+                "--no-cache",
+                "--spec",
+                "git+https://github.com/azure-ai-foundry/mcp-foundry.git@msbuild2025",
+                "run-azure-ai-foundry-mcp",
+                "--envFile",
+                "/Users/isekpo/Microsoft/ai-search-pydantic-mcp-client/.env",
+                "--transport",
+                "sse"
+            ]
+        }
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "servers": {
+        "mcp_foundry_server": {
+            "type": "stdio",
+            "command": "uv",
+            "args": [
+                "run",
+                "--directory",
+                "/Users/isekpo/Microsoft/mcp-foundry-gold",
+                "-m",
+                "mcp_foundry",
+                "--envFile",
+                ".env"
+            ]
+        }
+    }
+}

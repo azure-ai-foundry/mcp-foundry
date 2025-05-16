@@ -1,0 +1,8 @@
+{
+    "servers": {
+        "mcp_foundry_server": {
+            "type": "sse",
+            "url": "http://localhost:8000/sse"
+        }
+    }
+}

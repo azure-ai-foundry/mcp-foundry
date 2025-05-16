@@ -1,0 +1,18 @@
+{
+    "servers": {
+        "mcp_foundry_server": {
+            "type": "stdio",
+            "command": "uvx",
+            "args": [
+                "--directory",
+                "/Users/isekpo/Microsoft/ai-search-pydantic-mcp-client",
+                "--no-cache",
+                "--from",
+                "git+https://github.com/azure-ai-foundry/mcp-foundry.git@msbuild2025",
+                "run-azure-ai-foundry-mcp",
+                "--envFile",
+                ".env"
+            ]
+        }
+    }
+}

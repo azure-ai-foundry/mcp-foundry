@@ -1,0 +1,13 @@
+{
+    "id": "315",
+    "first_name": "John",
+    "last_name": "Leblanc",
+    "email": "john.leblanc@contogrocery.com",
+    "phone_number": "810.801.3267x736",
+    "date_of_birth": "1958-05-01",
+    "gender": "Male",
+    "signup_date": "2023-09-09",
+    "preferred_language": "en",
+    "active": true,
+    "points": 865.62
+}
