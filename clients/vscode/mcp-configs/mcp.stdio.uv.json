@@ -5,8 +5,9 @@
             "command": "uv",
             "args": [
                 "run",
+                "--prerelease=allow",
                 "--directory",
-                "/Users/isekpo/Microsoft/mcp-foundry-gold",
+                "/path/to/project",
                 "-m",
                 "mcp_foundry",
                 "--envFile",

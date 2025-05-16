@@ -2,16 +2,13 @@
     "servers": {
         "mcp_foundry_server": {
             "type": "stdio",
-            "command": "uvx",
+            "command": "pipx",
             "args": [
-                "--directory",
-                "/path/to/project",
+                "run",
                 "--no-cache",
-                "--from",
+                "--spec",
                 "git+https://github.com/azure-ai-foundry/mcp-foundry.git@msbuild2025",
-                "run-azure-ai-foundry-mcp",
-                "--envFile",
-                ".env"
+                "run-azure-ai-foundry-mcp"
             ]
         }
     }

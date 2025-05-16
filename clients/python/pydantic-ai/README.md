@@ -7,6 +7,7 @@ It comes with a helper MCP server that has tools for fetching remote URL content
 
 For the demo, we are going to use the sample dataset to interact with the Azure AI Search tools from the MCP service.
 
+
 You can run the Pydantic AI Sample code as follows:
 
 ````bash
