@@ -6,8 +6,9 @@
       "args": [
         "run",
         "--spec",
+        "--no-cache",
         "git+https://github.com/azure-ai-foundry/mcp-foundry.git",
-        "run-azure-foundry-mcp"
+        "run-azure-ai-foundry-mcp"
       ]
     }
   }
