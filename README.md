@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/azure-ai-foundry-mcp-foundry-badge.png)](https://mseep.ai/app/azure-ai-foundry-mcp-foundry)
+
 # Azure AI Foundry MCP Servers
 
 This repository showcases MCP servers that integrates with Azure AI Foundry to enable interesting scenarios powered by Azure AI Foundry.
