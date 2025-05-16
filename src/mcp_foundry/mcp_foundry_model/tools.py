@@ -237,7 +237,8 @@ async def deploy_model_on_ai_services(
         model_format: The format of the model (e.g. "OpenAI", "Meta", "Microsoft").
         azure_ai_services_name: The name of the Azure AI services account to deploy to.
         resource_group: The name of the resource group containing the Azure AI services account.
-        subscription_id: The Azure subscription ID.
+        subscription_id: The ID of the Azure subscription. This is string
+            with the format `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`. 
         model_version: (Optional) The version of the model to deploy. If not provided, the default version
             will be used.
         model_source: (Optional) The source of the model.
@@ -290,11 +291,16 @@ def get_model_quotas(subscription_id: str, location: str) -> list[dict]:
     """Get model quotas for a specific Azure location.
 
     Args:
-        subscription_id: The Azure subscription ID.
+        subscription_id: The ID of the Azure subscription. This is string
+            with the format `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
         location: The Azure location to retrieve quotas for.
 
     Returns:
         list: Returns a list of quota usages.
+
+    Usage:
+        Call this when you need to get information about available quota.
+        You should ensure that you use a valid subscription id.
     """
 
     client = get_cognitiveservices_client(subscription_id)
