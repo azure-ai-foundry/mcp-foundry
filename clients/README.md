@@ -43,9 +43,7 @@ Once the server is up and running you can point your code client or VSCode to th
 
 After the server is up, you can point the MCP Client to this endpoint.
 
-### Running the Server in STDIO Mode from VSCode, Claude Desktop, Cursor and WindSurf
-
-If you are using STDIO from other clients like VSCode, Claude Desktop, using the directives below
+### Running the Server in STDIO Mode from VSCode or other MCP Hosts that Supports STDIO Transport
 
 We have the following config examples for your reference using uv, uvx and pipx:
 
