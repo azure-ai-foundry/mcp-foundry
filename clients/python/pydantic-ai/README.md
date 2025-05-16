@@ -19,5 +19,3 @@ cd clients/python/pydantic-ai
 uv run main.py 
 
 ````
-
-[Animation Demo Goes Here]
