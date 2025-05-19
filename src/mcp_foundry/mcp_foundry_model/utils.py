@@ -37,7 +37,7 @@ dotenv.load_dotenv()
 logger = logging.getLogger("mcp_foundry")
 logging.basicConfig(level=logging.DEBUG)
 
-labs_api_url = os.environ.get("LABS_API_URL", "https://labs-mcp-api.azurewebsites.net/api/v1")
+labs_api_url = os.environ.get("LABS_API_URL", "https://foundry-labs-mcp-api.azurewebsites.net/api/v1")
 
 def get_client_headers_info(ctx):
     """Get client headers info."""

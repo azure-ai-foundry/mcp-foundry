@@ -24,7 +24,7 @@ from .utils import (
     get_models_list,
 )
 
-labs_api_url = os.environ.get("LABS_API_URL", "https://labs-mcp-api.azurewebsites.net/api/v1")
+labs_api_url = os.environ.get("LABS_API_URL", "https://foundry-labs-mcp-api.azurewebsites.net/api/v1")
 logger = logging.getLogger("mcp_foundry")
 
 @mcp.tool()
