@@ -27,3 +27,4 @@ class ModelDetails(BaseModel):
     code_sample_azure: str | dict | None
     code_sample_github: str | dict | None
     type: DeploymentOption
+    link: str
