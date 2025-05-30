@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 from typing import Literal
 from dotenv import load_dotenv
 
-from .mcp_server import mcp, auto_import_modules
+from mcp_foundry.mcp_server import mcp, auto_import_modules
 
 
 # Configure logging
@@ -16,15 +16,19 @@ logging.basicConfig(
 )
 logger = logging.getLogger("__main__")
 
+
 def main() -> None:
     """Runs the MCP server"""
 
     parser = ArgumentParser(description="Start the MCP service with provided or default configuration.")
 
-    parser.add_argument('--transport', required=False, default='stdio',
-                        help='Transport protocol (sse | stdio | streamable-http) (default: stdio)')
-    parser.add_argument('--envFile', required=False, default='.env',
-                        help='Path to .env file (default: .env)')
+    parser.add_argument(
+        "--transport",
+        required=False,
+        default="stdio",
+        help="Transport protocol (sse | stdio | streamable-http) (default: stdio)",
+    )
+    parser.add_argument("--envFile", required=False, default=".env", help="Path to .env file (default: .env)")
 
     # Parse the application arguments
     args = parser.parse_args()

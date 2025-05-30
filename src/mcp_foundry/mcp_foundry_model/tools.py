@@ -35,8 +35,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger("mcp_foundry_model")
 
+
 @mcp.tool()
-async def list_models_from_model_catalog(ctx: Context, search_for_free_playground: bool = False, publisher_name = "", license_name = "") -> str:
+async def list_models_from_model_catalog(ctx: Context, search_for_free_playground: bool = False, publisher_name: str = "", license_name: str = "") -> str:
     """
     Retrieves a list of supported models from the Azure AI Foundry catalog.
 
