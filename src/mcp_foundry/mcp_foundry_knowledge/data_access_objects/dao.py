@@ -78,7 +78,7 @@ class SearchBaseDao:
             api_key = self._get_env_variable('AZURE_AI_SEARCH_API_KEY')
             credential = AzureKeyCredential(api_key)
             return credential
-        elif self.authentication_method == 'service-principal':
+        elif self.authentication_method == 'service-principal' or self.authentication_method == 'user-token':
             credential = DefaultAzureCredential()
             return credential
 
