@@ -44,6 +44,9 @@ class SearchBaseDao:
             assert tenant_id is not None, self._environment_var_message("AZURE_TENANT_ID")
             assert client_id is not None, self._environment_var_message("AZURE_CLIENT_ID")
             assert client_secret is not None, self._environment_var_message("AZURE_CLIENT_SECRET")
+        elif self.authentication_method == "user-token":
+            # user-token doesn't depend on any environment variables
+            pass
 
     @staticmethod
     def _get_env_variable(key: str, default_value: str | None = None) -> str:
