@@ -84,7 +84,7 @@ class SearchBaseDao:
 
         error_message = (
             "SEARCH_AUTHENTICATION_METHOD was not specified or is invalid. "
-            "Must be one of api-search-key or service-principal"
+            "Must be one of api-search-key, service-principal or user-token."
         )
         raise Exception(error_message)
 
