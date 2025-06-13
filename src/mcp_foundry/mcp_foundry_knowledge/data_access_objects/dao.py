@@ -4,7 +4,7 @@ from typing import MutableMapping, Any, Optional, List, Union
 from mcp.server.fastmcp.server import logger
 from azure.core.credentials import AzureKeyCredential
 from azure.core.paging import ItemPaged
-from azure.identity import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential, AzureCliCredential
 from azure.search.documents import SearchClient, SearchItemPaged
 from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
 from azure.search.documents.indexes._generated.models import FieldMapping, IndexingSchedule, IndexingParameters, \
@@ -78,9 +78,11 @@ class SearchBaseDao:
             api_key = self._get_env_variable('AZURE_AI_SEARCH_API_KEY')
             credential = AzureKeyCredential(api_key)
             return credential
-        elif self.authentication_method == 'service-principal' or self.authentication_method == 'user-token':
+        elif self.authentication_method == 'service-principal':
             credential = DefaultAzureCredential()
             return credential
+        elif  self.authentication_method == 'user-token':
+            return AzureCliCredential()
 
         error_message = (
             "SEARCH_AUTHENTICATION_METHOD was not specified or is invalid. "
