@@ -4,7 +4,6 @@ import sys
 from argparse import ArgumentParser
 from typing import Literal
 from dotenv import load_dotenv
-
 from .mcp_server import mcp, auto_import_modules
 
 

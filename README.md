@@ -65,6 +65,13 @@ A Model Context Protocol server for Azure AI Foundry, providing a unified set of
 |  | `connect_agent` | Send a query to a specified agent. |
 |  | `query_default_agent` | Query the default agent defined in environment variables. |
 
+### Capabilities: Finetuning
+
+| Category | Tool | Description |
+|---|---|---|
+| **Finetuning** | `fetch_finetuning_status` | Shows the status of the finetuning job. |
+
+
 ## Prompt Examples
 
 ### Models
