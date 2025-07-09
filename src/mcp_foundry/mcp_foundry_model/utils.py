@@ -213,6 +213,30 @@ def get_cognitiveservices_client(
         credential=DefaultAzureCredential(), subscription_id=subscription_id
     )
 
+async def get_existing_deployment(subscription_id: str, resource_group: str, 
+                                account_name: str, deployment_name: str):
+    """
+    Retrieve an existing deployment configuration.
+    
+    Args:
+        credential: Azure credential object
+        subscription_id: Azure subscription ID
+        resource_group: Resource group name
+        account_name: Cognitive service account name
+        deployment_name: Deployment name
+        
+    Returns:
+        Deployment object if found, otherwise None.
+    """
+    client = get_cognitiveservices_client(subscription_id)
+
+    deployment = client.deployments.get(
+        resource_group_name=resource_group,
+        account_name=account_name,
+        deployment_name=deployment_name
+    )
+    return deployment
+
 def  get_code_sample_for_deployment_under_ai_services(model_name:str, inference_task: str, endpoint: str, deployment_name: str) -> Optional[str]:
     """Get a code snippet for a specific deployment.
 

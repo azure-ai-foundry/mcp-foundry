@@ -23,6 +23,7 @@ from .utils import (
     get_code_sample_for_labs_model,
     get_cognitiveservices_client,
     get_models_list,
+    get_existing_deployment
 )
 
 labs_api_url = os.environ.get("LABS_API_URL", "https://foundry-labs-mcp-api.azurewebsites.net/api/v1")
@@ -341,6 +342,66 @@ def list_deployments_from_azure_ai_services(subscription_id: str, resource_group
     client = get_cognitiveservices_client(subscription_id)
 
     return [deployment.as_dict() for deployment in client.deployments.list(resource_group,account_name=azure_ai_services_name)]
+
+@mcp.tool()
+async def update_model_deployment(
+    deployment_name: str,
+    azure_ai_services_name: str,
+    resource_group: str,
+    subscription_id: str,
+    model_format: str,
+    new_model_name: str,
+    model_version: str,
+) -> Deployment:
+    """Update an existing model deployment on Azure AI.
+
+    Args:
+        deployment_name: The name of the deployment to update.
+        new_model_name: The name of the model to deploy.
+        model_format: The format of the model (e.g. "OpenAI", "Meta", "Microsoft").
+        azure_ai_services_name: The name of the Azure AI services account to deploy to.
+        resource_group: The name of the resource group containing the Azure AI services account.
+        subscription_id: The ID of the Azure subscription.
+        model_version: The version of the model to deploy.
+
+    Returns:
+        Deployment: The updated deployment object, or raises an exception if not found.
+    """
+
+    existing_deployment = await get_existing_deployment(
+        subscription_id, resource_group, azure_ai_services_name, deployment_name
+    )
+
+    if existing_deployment is None:
+        raise ValueError(
+            f"Deployment '{deployment_name}' not found in Azure AI Services account '{azure_ai_services_name}'."
+        )
+    
+    # Check if the model has changed
+    model_changed = (
+        existing_deployment.properties.model.name != new_model_name
+        or existing_deployment.properties.model.version != model_version
+    )
+
+    if not model_changed:
+        return existing_deployment
+
+    updated_model = DeploymentModel(
+        format=model_format,
+        name=new_model_name,
+        version=model_version,
+    )
+    existing_deployment.properties.model = updated_model
+
+    client = get_cognitiveservices_client(subscription_id)
+
+    return client.deployments.begin_create_or_update(
+        resource_group,
+        azure_ai_services_name,
+        deployment_name,
+        deployment=existing_deployment,
+        polling=False,
+    )
 
 @mcp.tool()
 async def deploy_model_on_ai_services(
