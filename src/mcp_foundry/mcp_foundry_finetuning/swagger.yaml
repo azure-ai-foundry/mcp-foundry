@@ -1,0 +1,390 @@
+openapi: 3.0.3
+info:
+  title: Azure OpenAI Fine-tuning API
+  version: 2024-02-01
+  description: |
+    Complete API specification for Azure OpenAI fine-tuning operations.
+    This spec covers all endpoints used in the MCP Foundry fine-tuning tools.
+  contact:
+    name: MCP Foundry Team
+    
+servers:
+  - url: '{azure_endpoint}'
+    description: Azure OpenAI endpoint
+    variables:
+      azure_endpoint:
+        default: https://your-resource.openai.azure.com
+        description: Your Azure OpenAI resource endpoint
+
+security:
+  - apiKey: []
+
+paths:
+  /openai/fine_tuning/jobs:
+    get:
+      operationId: listFineTuningJobs
+      summary: List all fine-tuning jobs
+      description: Retrieves a list of all fine-tuning jobs for your Azure OpenAI resource
+      tags:
+        - Fine-tuning Jobs
+      parameters:
+        - $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: Successfully retrieved list of fine-tuning jobs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FineTuningJobSummary'
+                  has_more:
+                    type: boolean
+                    description: Whether there are more jobs to retrieve
+              example:
+                data:
+                  - id: "ftjob-abc123"
+                    status: "succeeded"
+                    created_at: 1234567890
+                    model: "gpt-35-turbo"
+                  - id: "ftjob-def456"
+                    status: "running"
+                    created_at: 1234567891
+                    model: "gpt-35-turbo"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /openai/fine_tuning/jobs/{job_id}:
+    get:
+      operationId: getFineTuningJob
+      summary: Get fine-tuning job details
+      description: Retrieves detailed information about a specific fine-tuning job
+      tags:
+        - Fine-tuning Jobs
+      parameters:
+        - $ref: '#/components/parameters/JobId'
+        - $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: Successfully retrieved fine-tuning job details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FineTuningJobDetail'
+              example:
+                id: "ftjob-abc123"
+                status: "succeeded"
+                model: "gpt-35-turbo"
+                created_at: 1234567890
+                finished_at: 1234567900
+                fine_tuned_model: "gpt-35-turbo-ftjob-abc123"
+                hyperparameters:
+                  n_epochs: 3
+                  batch_size: 1
+                  learning_rate_multiplier: 0.1
+                trained_tokens: 50000
+                result_files:
+                  - "file-result123"
+                training_files:
+                  - "file-train123"
+                validation_files:
+                  - "file-val123"
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /openai/fine_tuning/jobs/{job_id}/events:
+    get:
+      operationId: getFineTuningJobEvents
+      summary: Get fine-tuning job events
+      description: Retrieves all events for a specific fine-tuning job including progress updates and billing details
+      tags:
+        - Fine-tuning Jobs
+      parameters:
+        - $ref: '#/components/parameters/JobId'
+        - $ref: '#/components/parameters/ApiVersion'
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+          description: Number of events to retrieve
+        - name: after
+          in: query
+          schema:
+            type: string
+          description: Cursor for pagination
+      responses:
+        '200':
+          description: Successfully retrieved job events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FineTuningEvent'
+                  has_more:
+                    type: boolean
+              example:
+                data:
+                  - created_at: 1234567890
+                    message: "Fine-tuning job started"
+                    level: "info"
+                  - created_at: 1234567891
+                    message: "Step 100/1000"
+                    level: "info"
+                  - created_at: 1234567900
+                    message: "Fine-tuning job succeeded"
+                    level: "info"
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /openai/files/{file_id}/content:
+    get:
+      operationId: getFileContent
+      summary: Get file content
+      description: Downloads the content of a file, including training data or result metrics
+      tags:
+        - Files
+      parameters:
+        - $ref: '#/components/parameters/FileId'
+        - $ref: '#/components/parameters/ApiVersion'
+      responses:
+        '200':
+          description: Successfully retrieved file content
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: File content (JSONL for training files, CSV for result files)
+              example: |
+                {"messages": [{"role": "system", "content": "You are a helpful assistant."}, {"role": "user", "content": "Hello"}, {"role": "assistant", "content": "Hi there!"}]}
+                {"messages": [{"role": "system", "content": "You are a helpful assistant."}, {"role": "user", "content": "How are you?"}, {"role": "assistant", "content": "I'm doing well, thank you!"}]}
+            text/csv:
+              schema:
+                type: string
+                description: CSV content for result files
+              example: |
+                step,train_loss,valid_loss,full_valid_loss,train_mean_token_accuracy,valid_mean_token_accuracy,full_valid_mean_token_accuracy
+                1,2.345,2.456,2.467,0.789,0.778,0.776
+                2,1.234,1.345,1.356,0.890,0.889,0.887
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: api-key
+      description: Azure OpenAI API key
+
+  parameters:
+    ApiVersion:
+      name: api-version
+      in: query
+      required: true
+      schema:
+        type: string
+        default: '2024-02-01'
+        enum:
+          - '2024-02-01'
+          - '2023-12-01-preview'
+          - '2023-10-01-preview'
+      description: API version to use
+
+    JobId:
+      name: job_id
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^ftjob-[a-zA-Z0-9]+$'
+      description: The ID of the fine-tuning job
+      example: ftjob-abc123
+
+    FileId:
+      name: file_id
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^file-[a-zA-Z0-9]+$'
+      description: The ID of the file
+      example: file-abc123
+
+  schemas:
+    FineTuningJobSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The fine-tuning job ID
+          example: ftjob-abc123
+        status:
+          type: string
+          enum: 
+            - pending
+            - running
+            - succeeded
+            - failed
+            - cancelled
+          description: Current status of the job
+        created_at:
+          type: integer
+          description: Unix timestamp of job creation
+        model:
+          type: string
+          description: Base model being fine-tuned
+          example: gpt-35-turbo
+
+    FineTuningJobDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The fine-tuning job ID
+        status:
+          type: string
+          enum: 
+            - pending
+            - running
+            - succeeded
+            - failed
+            - cancelled
+        model:
+          type: string
+          description: Base model being fine-tuned
+        created_at:
+          type: integer
+          description: Unix timestamp of job creation
+        finished_at:
+          type: integer
+          nullable: true
+          description: Unix timestamp of job completion
+        fine_tuned_model:
+          type: string
+          nullable: true
+          description: Name of the fine-tuned model (available after success)
+        hyperparameters:
+          type: object
+          properties:
+            n_epochs:
+              type: integer
+              description: Number of training epochs
+            batch_size:
+              type: integer
+              description: Training batch size
+            learning_rate_multiplier:
+              type: number
+              description: Learning rate multiplier
+        trained_tokens:
+          type: integer
+          nullable: true
+          description: Total number of tokens trained
+        result_files:
+          type: array
+          items:
+            type: string
+          description: List of result file IDs
+        training_files:
+          type: array
+          items:
+            type: string
+          description: List of training file IDs
+        validation_files:
+          type: array
+          items:
+            type: string
+          description: List of validation file IDs
+        estimated_finish:
+          type: integer
+          nullable: true
+          description: Estimated completion time (Unix timestamp)
+        error:
+          type: object
+          nullable: true
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+          description: Error details if job failed
+
+    FineTuningEvent:
+      type: object
+      properties:
+        created_at:
+          type: integer
+          description: Unix timestamp of the event
+        message:
+          type: string
+          description: Event message
+        level:
+          type: string
+          enum:
+            - info
+            - warning
+            - error
+          description: Event severity level
+
+  responses:
+    UnauthorizedError:
+      description: Authentication failed - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: "401"
+                  message:
+                    type: string
+                    example: "Unauthorized. Access token is missing, invalid, or expired."
+
+    NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: "404"
+                  message:
+                    type: string
+                    example: "The requested resource was not found."
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: "500"
+                  message:
+                    type: string
+                    example: "An internal server error occurred."
