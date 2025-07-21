@@ -65,6 +65,19 @@ A Model Context Protocol server for Azure AI Foundry, providing a unified set of
 |  | `connect_agent` | Send a query to a specified agent. |
 |  | `query_default_agent` | Query the default agent defined in environment variables. |
 
+### Capabilities: Finetuning
+
+| Category | Tool | Description |
+|---|---|---|
+| **Finetuning** | `fetch_finetuning_status` | Retrieves detailed status and metadata for a specific fine-tuning job, including job state, model, creation and finish times, hyperparameters, and any errors. |
+|  | `list_finetuning_jobs` | Lists all fine-tuning jobs in the resource, returning job IDs and their current statuses for easy tracking and management. |
+|  | `get_finetuning_job_events` | Retrieves a chronological list of all events for a specific fine-tuning job, including timestamps and detailed messages for each training step, evaluation, and completion. |
+|  | `get_finetuning_metrics` | Retrieves training and evaluation metrics for a specific fine-tuning job, including loss curves, accuracy, and other relevant performance indicators for monitoring and analysis. |
+|  | `list_finetuning_files` | Lists all files available for fine-tuning in Azure OpenAI, including file IDs, names, purposes, and statuses. |
+|  | `execute_dynamic_swagger_action` | Executes any tool dynamically generated from the Swagger specification, allowing flexible API calls for advanced scenarios. |
+|  | `list_dynamic_swagger_tools` | Lists all dynamically registered tools from the Swagger specification, enabling discovery and automation of available API endpoints. |
+
+
 ## Prompt Examples
 
 ### Models
