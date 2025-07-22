@@ -231,7 +231,7 @@ def get_prototyping_instructions_for_github_and_labs(ctx: Context) -> str:
         return f"Error fetching instructions from API: {response.status_code}"
 
     copilot_instructions = response.json()
-    return copilot_instructions["resource"]
+    return copilot_instructions["resource"]["content"]
 
 @mcp.tool()
 def get_model_quotas(subscription_id: str, location: str) -> list[dict]:
